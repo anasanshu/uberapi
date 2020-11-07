@@ -28,8 +28,8 @@ public class Constants {
             constants.put(dbConstant.getName(), dbConstant.getValue());
         });
     }
-    
-    public Integer  getRideStartOTPExpiryMinutes() {
+
+    public Integer getRideStartOTPExpiryMinutes() {
         return Integer.parseInt(constants.getOrDefault("rideStartOTPExpiryMinutes", DEFAULT_EXPIRY_MINUTES));
     }
 }
