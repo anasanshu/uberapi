@@ -1,2 +1,4 @@
-package com.uber.uberapi.services.messagequeue;public class MQMessage {
+package com.uber.uberapi.services.messagequeue;
+
+public interface MQMessage {
 }
