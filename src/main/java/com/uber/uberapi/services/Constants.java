@@ -32,4 +32,20 @@ public class Constants {
     public Integer getRideStartOTPExpiryMinutes() {
         return Integer.parseInt(constants.getOrDefault("rideStartOTPExpiryMinutes", DEFAULT_EXPIRY_MINUTES));
     }
+
+    public String getSchedulingTopicName() {
+        return constants.getOrDefault("schedulingTopicName", "schedulingServiceTopic");
+    }
+
+    public String getDriverMatchingTopicName() {
+        return constants.getOrDefault("driverMatchingTopicName", "driverMatchingServiceTopic");
+    }
+
+    public Integer getMaxWaitTimeForPreviousRide() {
+        return Integer.parseInt(constants.getOrDefault("maxWaitTimeForPreviousRide", "600000"));
+    }
+
+    public Integer getBookingProcessBeforeTime() {
+        return Integer.parseInt(constants.getOrDefault("bookingProcessBeforeTime", "600000"));
+    }
 }

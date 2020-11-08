@@ -5,9 +5,7 @@ import com.uber.uberapi.exception.InvalidOTPException;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,6 +25,9 @@ public class Booking extends Auditable {
     @ManyToOne
     private Driver driver;
 
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Set<Driver> notifiedDrivers = new HashSet<>();
+
     @Enumerated(value = EnumType.STRING)
     private BookingType bookingType;
 
@@ -42,7 +43,7 @@ public class Booking extends Auditable {
     @OneToOne
     private PaymentReceipt paymentReceipt;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "booking_route",
             joinColumns = @JoinColumn(name = "booking_id"),
@@ -52,13 +53,29 @@ public class Booking extends Auditable {
     @OrderColumn(name = "location_index")
     private List<ExactLocation> route = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "booking_completed_route",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "exact_location_id"),
+            indexes = {@Index(columnList = "booking_id")}
+    )
+    @OrderColumn(name = "location_index")
+    private List<ExactLocation> completedRoute = new ArrayList<>();
+
     private Long totalDistanceMeters;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date startTime;
+    private Date scheduledTime;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date endTime;
+    private Date startTime; // actual start time
+
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date endTime; // actual end time
+
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date expectedCompletionTime;
 
     @OneToOne
     private OTP rideStartOTP;
@@ -81,6 +98,34 @@ public class Booking extends Auditable {
         }
 
         bookingStatus = BookingStatus.COMPLETED;
+        driver.setActiveBooking(null);
+    }
+
+    public boolean canChangeRoute() {
+        return bookingStatus.equals(BookingStatus.ASSIGNING_DRIVER)
+                || bookingStatus.equals(BookingStatus.CAB_ARRIVED)
+                || bookingStatus.equals(BookingStatus.REACHING_PICKUP_POINT)
+                || bookingStatus.equals(BookingStatus.IN_RIDE)
+                || bookingStatus.equals(BookingStatus.SCHEDULED);
+    }
+
+    public boolean needsDriver() {
+        return bookingStatus.equals(BookingStatus.ASSIGNING_DRIVER);
+    }
+
+    public ExactLocation getPickupLocation() {
+        return route.get(0);
+    }
+
+    public void cancel() {
+        if(!(bookingStatus.equals(BookingStatus.REACHING_PICKUP_POINT)
+                || bookingStatus.equals(BookingStatus.ASSIGNING_DRIVER)
+                || bookingStatus.equals(BookingStatus.SCHEDULED)
+                || bookingStatus.equals(BookingStatus.CAB_ARRIVED))){
+            throw new InvalidActionForBookingStateException("Ride cannot be cancelled");
+        }
+        setBookingStatus(BookingStatus.CANCELLED);
+        setDriver(null);
+        setNotifiedDrivers(null);
     }
 }
-start

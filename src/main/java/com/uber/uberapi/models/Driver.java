@@ -4,9 +4,8 @@ import com.uber.uberapi.exception.UnapprovedDriverException;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+import javax.print.attribute.IntegerSyntax;
+import java.util.*;
 
 @Getter
 @Setter
@@ -24,6 +23,8 @@ public class Driver extends Auditable {
 
     private String name;
 
+    private String phoneNumber;
+
     @OneToOne(mappedBy = "driver")
     private Car car;
 
@@ -35,8 +36,14 @@ public class Driver extends Auditable {
     @Enumerated(value = EnumType.STRING)
     private DriverApprovalStatus driverApprovalStatus;
 
+    @OneToOne
+    private Booking activeBooking = null;
+
     @OneToMany(mappedBy = "driver")
-    private List<Booking> bookings = new ArrayList<>();
+    private List<Booking> bookings; // bookings that the driver actually drove
+
+    @ManyToMany(mappedBy = "notifiedDrivers", cascade = CascadeType.PERSIST)
+    private Set<Booking> acceptableBookings = new HashSet<>(); // bookings that the driver can currently accept
 
     private boolean isAvailable;
 
@@ -53,5 +60,15 @@ public class Driver extends Auditable {
             throw new UnapprovedDriverException("Driver approval pending or denied" + getId());
         }
         isAvailable = available;
+    }
+
+    public boolean canAcceptBooking(Integer maxWaitTimeForPreviousRide) {
+        if (isAvailable && activeBooking == null) {
+            return true;
+        }
+
+        return activeBooking
+                .getExpectedCompletionTime()
+                .before(DateUtils.addMinutes(new Date(), maxWaitTimeForPreviousRide));
     }
 }
