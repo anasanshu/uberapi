@@ -118,10 +118,10 @@ public class Booking extends Auditable {
     }
 
     public void cancel() {
-        if(!(bookingStatus.equals(BookingStatus.REACHING_PICKUP_POINT)
+        if (!(bookingStatus.equals(BookingStatus.REACHING_PICKUP_POINT)
                 || bookingStatus.equals(BookingStatus.ASSIGNING_DRIVER)
                 || bookingStatus.equals(BookingStatus.SCHEDULED)
-                || bookingStatus.equals(BookingStatus.CAB_ARRIVED))){
+                || bookingStatus.equals(BookingStatus.CAB_ARRIVED))) {
             throw new InvalidActionForBookingStateException("Ride cannot be cancelled");
         }
         setBookingStatus(BookingStatus.CANCELLED);

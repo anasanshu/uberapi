@@ -5,8 +5,8 @@ import com.uber.uberapi.models.*;
 import com.uber.uberapi.repositories.BookingRepository;
 import com.uber.uberapi.repositories.DriverRepository;
 import com.uber.uberapi.repositories.PassengerRepository;
+import com.uber.uberapi.services.OTP.OTPService;
 import com.uber.uberapi.services.messagequeue.MessageQueue;
-import org.apache.catalina.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +80,7 @@ public class BookingService {
         try {
             booking.cancel();
             bookingRepository.save(booking);
-        }catch (InvalidActionForBookingStateException inner){
+        } catch (InvalidActionForBookingStateException inner) {
             notificationService.notify(passenger.getPhoneNumber(),
                     "Cannot cancel the booking now. If your ride is in progress, ask your driver to end the ride");
             throw inner;

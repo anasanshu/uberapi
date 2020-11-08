@@ -19,7 +19,7 @@ public class DBConstant extends Auditable {
     private String name;
     private String value;
 
-    public Long getAsLong(){
+    public Long getAsLong() {
         return Long.parseLong(value);
     }
 }

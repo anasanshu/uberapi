@@ -33,6 +33,7 @@ public class SchedulingService {
     BookingRepository bookingRepository;
 
     Set<Booking> scheduledBookings = new HashSet<>();
+
     @Scheduled(fixedRate = 1000)
     public void consumer() {
         MQMessage m = messageQueue.consumeMessage(constants.getSchedulingTopicName());
@@ -47,12 +48,12 @@ public class SchedulingService {
     }
 
     @Scheduled(fixedRate = 1000)
-    public void process(){
+    public void process() {
         Set<Booking> newScheduledBookings = new HashSet<>();
-        for(Booking booking: scheduledBookings){
-            if(DateUtils.addMinutes(new Date(), constants.getBookingProcessBeforeTime()).after(booking.getScheduledTime())){
+        for (Booking booking : scheduledBookings) {
+            if (DateUtils.addMinutes(new Date(), constants.getBookingProcessBeforeTime()).after(booking.getScheduledTime())) {
                 bookingService.acceptBooking(booking.getDriver(), booking);
-            }else{
+            } else {
                 newScheduledBookings.add(booking);
             }
         }
