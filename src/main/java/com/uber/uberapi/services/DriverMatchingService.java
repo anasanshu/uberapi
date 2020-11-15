@@ -4,6 +4,7 @@ import com.uber.uberapi.models.Booking;
 import com.uber.uberapi.models.Driver;
 import com.uber.uberapi.models.ExactLocation;
 import com.uber.uberapi.repositories.BookingRepository;
+import com.uber.uberapi.services.locationService.LocationTrackingService;
 import com.uber.uberapi.services.messagequeue.MQMessage;
 import com.uber.uberapi.services.messagequeue.MessageQueue;
 import lombok.AllArgsConstructor;

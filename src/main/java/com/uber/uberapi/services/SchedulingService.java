@@ -3,6 +3,7 @@ package com.uber.uberapi.services;
 import com.uber.uberapi.models.Booking;
 import com.uber.uberapi.models.DateUtils;
 import com.uber.uberapi.repositories.BookingRepository;
+import com.uber.uberapi.services.locationService.LocationTrackingService;
 import com.uber.uberapi.services.messagequeue.MQMessage;
 import com.uber.uberapi.services.messagequeue.MessageQueue;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
