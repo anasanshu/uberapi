@@ -1,11 +1,14 @@
 package com.uber.uberapi.models;
 
 import com.uber.uberapi.exception.UnapprovedDriverException;
+import com.uber.uberapi.utils.DateUtils;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.print.attribute.IntegerSyntax;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter

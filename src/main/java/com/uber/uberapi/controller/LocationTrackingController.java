@@ -6,7 +6,9 @@ import com.uber.uberapi.models.ExactLocation;
 import com.uber.uberapi.models.Passenger;
 import com.uber.uberapi.repositories.DriverRepository;
 import com.uber.uberapi.repositories.PassengerRepository;
-import com.uber.uberapi.services.locationService.LocationTrackingService;
+import com.uber.uberapi.services.Constants;
+import com.uber.uberapi.services.locationTracking.LocationTrackingService;
+import com.uber.uberapi.services.messagequeue.MessageQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +27,12 @@ public class LocationTrackingController {
     DriverRepository driverRepository;
     @Autowired
     LocationTrackingService locationTrackingService;
+    @Autowired
+    MessageQueue messageQueue;
+    @Autowired
+    Constants constants;
 
-    public Driver getDriverFromId(Long driverId){
+    public Driver getDriverFromId(Long driverId) {
         Optional<Driver> driver = driverRepository.findById(driverId);
         if (driver.isEmpty()) {
             throw new InvalidDriverException("No driver with id - " + driverId);
@@ -35,7 +41,7 @@ public class LocationTrackingController {
         return driver.get();
     }
 
-    public Passenger getPassengerFromId(Long passengerId){
+    public Passenger getPassengerFromId(Long passengerId) {
         Optional<Passenger> passenger = passengerRepository.findById(passengerId);
         if (passenger.isEmpty()) {
             throw new InvalidDriverException("No driver with id - " + passengerId);
@@ -54,7 +60,10 @@ public class LocationTrackingController {
                 .longitude((data.getLongitude()))
                 .build();
         // delegate the task to a queue
-//        locationTrackingService.updateDriverLocation(driver, location);
+        messageQueue.sendMessage(
+                constants.getLocationTrackingTopicName(),
+                new LocationTrackingService.Message(driver, location)
+        );
     }
 
     @PutMapping("/passenger/{passengerId}")

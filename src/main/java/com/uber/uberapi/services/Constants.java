@@ -1,12 +1,9 @@
 package com.uber.uberapi.services;
 
-import com.uber.uberapi.models.DBConstant;
 import com.uber.uberapi.repositories.DBConstantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,5 +44,29 @@ public class Constants {
 
     public Integer getBookingProcessBeforeTime() {
         return Integer.parseInt(constants.getOrDefault("bookingProcessBeforeTime", "600000"));
+    }
+
+    public String getLocationTrackingTopicName() {
+        return constants.getOrDefault("locationTrackingTopicName", "locationTrackingTopicName");
+    }
+
+    public double getMaxDistanceKmForDriverMatching() {
+        return Double.parseDouble(constants.getOrDefault("maxDistanceKmForDriverMatching", "2"));
+    }
+
+    public Integer getMaxDriverETAMinutes() {
+        return Integer.parseInt(constants.getOrDefault("maxDriverETAMinutes", "15"));
+    }
+
+    public boolean getIsETABasedFilterEnabled() {
+        return Boolean.parseBoolean(constants.getOrDefault("isETABasedFilterEnabled", "true"));
+    }
+
+    public boolean getIsGenderFilterEnabled() {
+        return Boolean.parseBoolean(constants.getOrDefault("isGenderFilterEnabled", "true"));
+    }
+
+    public double getDefaultETASpeedKmph() {
+        return Double.parseDouble(constants.getOrDefault("defaultETASpeedKmph", "30.0"));
     }
 }

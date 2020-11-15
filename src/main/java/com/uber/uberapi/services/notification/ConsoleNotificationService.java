@@ -1,4 +1,4 @@
-package com.uber.uberapi.services;
+package com.uber.uberapi.services.notification;
 
 import org.springframework.stereotype.Service;
 
